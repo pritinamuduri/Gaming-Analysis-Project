@@ -49,12 +49,23 @@ st.set_page_config(
 def get_db_password() -> str:
     """Retrieve password from Streamlit secrets (for cloud deployment)
     or session state (for manual local entry).
+    Supports multiple common key aliases: db_password, password, DB_PASSWORD, etc.
     """
     try:
-        if "mysql" in st.secrets and "password" in st.secrets["mysql"]:
-            return str(st.secrets["mysql"]["password"])
-        if "db_password" in st.secrets:
-            return str(st.secrets["db_password"])
+        # Check all common top-level secret keys
+        for key in ["db_password", "password", "DB_PASSWORD", "PASSWORD", "mysql_password", "MYSQL_PASSWORD"]:
+            if key in st.secrets:
+                val = str(st.secrets[key]).strip()
+                if val:
+                    return val
+
+        # Check nested [mysql] section
+        if "mysql" in st.secrets:
+            for key in ["password", "db_password", "PASSWORD", "DB_PASSWORD"]:
+                if key in st.secrets["mysql"]:
+                    val = str(st.secrets["mysql"][key]).strip()
+                    if val:
+                        return val
     except Exception:
         pass
     return st.session_state.get("db_password", "")
@@ -114,6 +125,7 @@ def require_connection():
                 type="password",
                 value=st.session_state.db_password,
             )
+            st.caption("🔒 *To bypass this screen for everyone, add `db_password` to Streamlit Cloud Settings > Secrets.*")
 
         if not st.session_state.db_password:
             st.info("Enter your MySQL password in the sidebar to continue.")
