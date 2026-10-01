@@ -120,12 +120,23 @@ def require_connection():
 
         with st.sidebar:
             st.header("Database connection")
+
+            # Diagnostic helper so the user can immediately see what Streamlit Cloud sees
+            try:
+                keys_found = list(st.secrets.keys()) if hasattr(st, "secrets") else []
+                if keys_found:
+                    st.warning(f"⚠️ Secrets detected, but password key was not found. Available keys: {keys_found}")
+                else:
+                    st.info("ℹ️ No secrets detected in Streamlit Cloud yet.")
+            except Exception:
+                st.info("ℹ️ No secrets detected in Streamlit Cloud yet.")
+
             st.session_state.db_password = st.text_input(
                 "MySQL password",
                 type="password",
                 value=st.session_state.db_password,
             )
-            st.caption("🔒 *To bypass this screen for everyone, add `db_password` to Streamlit Cloud Settings > Secrets.*")
+            st.caption("🔒 *To bypass this screen for everyone, add `db_password = \"...\"` to Streamlit Cloud Settings > Secrets.*")
 
         if not st.session_state.db_password:
             st.info("Enter your MySQL password in the sidebar to continue.")
