@@ -1,0 +1,32 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Streamlit secrets (NEVER commit secrets to GitHub)
+.streamlit/secrets.toml
+
+# Environment Variables & Secrets
+.env
+*.env
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Excel and Raw Temp Files (optional)
+# *.xlsx
